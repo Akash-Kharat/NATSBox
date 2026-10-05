@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Users, RefreshCw } from 'lucide-react';
 import { useJetStreamStore } from '../../stores/jetStreamStore';
+import type { ConsumerConfig } from '../../../shared/types';
 
 interface ConsumerListProps {
   connectionId: string;
@@ -46,12 +47,12 @@ export const ConsumerList: React.FC<ConsumerListProps> = ({ connectionId, stream
     e.preventDefault();
     try {
       const config = {
-        durable_name: formData.durable_name || undefined,
-        deliver_policy: formData.deliver_policy,
-        ack_policy: formData.ack_policy,
-        replay_policy: formData.replay_policy,
-        filter_subject: formData.filter_subject || undefined,
-        max_deliver: Number(formData.max_deliver),
+        durableName: formData.durable_name || undefined,
+        deliverPolicy: formData.deliver_policy as ConsumerConfig['deliverPolicy'],
+        ackPolicy: formData.ack_policy as ConsumerConfig['ackPolicy'],
+        replayPolicy: formData.replay_policy as ConsumerConfig['replayPolicy'],
+        filterSubject: formData.filter_subject || undefined,
+        maxDeliver: Number(formData.max_deliver),
       };
       await createConsumer(connectionId, streamName, config);
       setShowForm(false);

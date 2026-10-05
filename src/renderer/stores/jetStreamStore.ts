@@ -14,7 +14,7 @@ interface JetStreamState {
   loadConsumers: (connId: string, stream: string) => Promise<void>;
   createConsumer: (connId: string, stream: string, config: ConsumerConfig) => Promise<void>;
   deleteConsumer: (connId: string, stream: string, name: string) => Promise<void>;
-  browseMessages: (connId: string, stream: string, opts: BrowseMessagesOptions) => Promise<void>;
+  browseMessages: (connId: string, stream: string, opts: BrowseMessagesOptions) => Promise<StoredMessage[]>;
   fetchStreams: (connId: string) => Promise<void>;
   fetchConsumers: (connId: string, stream: string) => Promise<ConsumerInfo[]>;
 }
@@ -102,6 +102,7 @@ export const useJetStreamStore = create<JetStreamState>((set, get) => ({
       const messages = await (window as any).natsAPI.jetstream.browseMessages(connId, stream, opts);
       const key = `${connId}:${stream}`;
       set((state) => ({ storedMessages: { ...state.storedMessages, [key]: messages } }));
+      return messages as StoredMessage[];
     } catch (error) {
       console.error('Failed to browse messages:', error);
       throw error;

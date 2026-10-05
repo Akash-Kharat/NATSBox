@@ -178,8 +178,8 @@ export const LoadTestDashboard: React.FC<LoadTestDashboardProps> = ({ config, on
                 </div>
              </div>
              <div className="flex-1 p-5">
-               {progress && progress.dataPoints?.length > 0 ? (
-                 <LoadTestChart dataPoints={progress.dataPoints} />
+               {progress && (progress.dataPoints?.length ?? 0) > 0 ? (
+                 <LoadTestChart dataPoints={progress.dataPoints ?? []} />
                ) : (
                  <div className="h-full w-full flex flex-col items-center justify-center text-gray-400">
                    <BarChart2 size={48} className="mb-4 text-gray-200" />

@@ -9,7 +9,7 @@ export const ConnectionForm: React.FC = () => {
   const { connections, addConnection, updateConnection, deleteConnection } = useConnectionStore();
   
   const isEdit = !!id && id !== 'new';
-  const existingConfig = isEdit ? connections.find((c: any) => c.id === id) : null;
+  const existingConfig: any = isEdit ? connections.find((c: any) => c.id === id) : null;
 
   const [formData, setFormData] = useState<any>({
     name: 'Local NATS',

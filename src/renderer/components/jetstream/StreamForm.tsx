@@ -2,6 +2,14 @@ import React, { useState } from 'react';
 import { Save, X, Info } from 'lucide-react';
 import { useJetStreamStore } from '../../stores/jetStreamStore';
 
+/** Parses durations like 30s, 15m, 1h, 7d into nanoseconds. Empty/invalid = 0 (unlimited). */
+function parseMaxAge(value: unknown): number {
+  const m = /^\s*(\d+)\s*(s|m|h|d)\s*$/i.exec(String(value ?? ''));
+  if (!m) return 0;
+  const unitSeconds: Record<string, number> = { s: 1, m: 60, h: 3600, d: 86400 };
+  return Number(m[1]) * unitSeconds[m[2].toLowerCase()] * 1e9;
+}
+
 interface StreamFormProps {
   connectionId: string;
   onClose: () => void;
@@ -17,12 +25,12 @@ export const StreamForm: React.FC<StreamFormProps> = ({ connectionId, onClose, e
     subjects: editStream?.config?.subjects?.join(', ') || '',
     retention: editStream?.config?.retention || 'limits',
     storage: editStream?.config?.storage || 'file',
-    max_msgs: editStream?.config?.max_msgs || -1,
-    max_bytes: editStream?.config?.max_bytes || -1,
-    max_age: editStream?.config?.max_age || '',
-    max_msg_size: editStream?.config?.max_msg_size || -1,
+    max_msgs: editStream?.config?.maxMsgs || -1,
+    max_bytes: editStream?.config?.maxBytes || -1,
+    max_age: '',
+    max_msg_size: editStream?.config?.maxMsgSize || -1,
     discard: editStream?.config?.discard || 'old',
-    replicas: editStream?.config?.num_replicas || 1,
+    replicas: editStream?.config?.replicas || 1,
     description: editStream?.config?.description || '',
   });
 
@@ -39,12 +47,12 @@ export const StreamForm: React.FC<StreamFormProps> = ({ connectionId, onClose, e
       subjects: formData.subjects.split(',').map((s: string) => s.trim()).filter(Boolean),
       retention: formData.retention,
       storage: formData.storage,
-      max_msgs: Number(formData.max_msgs),
-      max_bytes: Number(formData.max_bytes),
-      // max_age: formData.max_age, 
-      max_msg_size: Number(formData.max_msg_size),
+      maxMsgs: Number(formData.max_msgs),
+      maxBytes: Number(formData.max_bytes),
+      maxAge: parseMaxAge(formData.max_age), 
+      maxMsgSize: Number(formData.max_msg_size),
       discard: formData.discard,
-      num_replicas: Number(formData.replicas),
+      replicas: Number(formData.replicas),
       description: formData.description,
     };
 

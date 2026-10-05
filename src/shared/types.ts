@@ -278,7 +278,7 @@ export interface DockerContainer {
   name: string;
   image: string;
   status: 'running' | 'stopped' | 'created' | 'removing' | 'paused' | 'exited' | 'dead';
-  ports: { host: number; container: number; protocol: string }[];
+  ports: { host: number; container: number; protocol: string; privatePort?: number; publicPort?: number; type?: string }[];
   created: string;
   state: string;
 }

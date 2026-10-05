@@ -22,7 +22,11 @@ export const MessageBrowser: React.FC<MessageBrowserProps> = ({ connectionId, st
   const loadMessages = async () => {
     setLoading(true);
     try {
-      const res = await browseMessages(connectionId, streamName, filters);
+      const res = await browseMessages(connectionId, streamName, {
+        filterSubject: filters.subject || undefined,
+        startSequence: Number(filters.start_seq) || undefined,
+        batchSize: Number(filters.batch) || undefined,
+      });
       setMessages(res || []);
     } catch (err) {
       alert('Error fetching messages: ' + String(err));

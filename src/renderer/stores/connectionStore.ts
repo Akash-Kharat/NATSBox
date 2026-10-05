@@ -82,6 +82,7 @@ export const useConnectionStore = create<ConnectionState>((set, get) => ({
       id: uuid(),
       name: config.name || 'New Connection',
       ...config,
+      auth: config.auth || { type: 'none' },
       publishers: config.publishers || [],
       subscribers: config.subscribers || []
     };
@@ -222,7 +223,7 @@ export const useConnectionStore = create<ConnectionState>((set, get) => ({
       if (c.id === connId) {
         return {
           ...c,
-          publishers: [...(c.publishers || []), { id: pubId, subject: '', payload: '', payloadType: 'json' }]
+          publishers: [...(c.publishers || []), { id: pubId, subject: '', payload: '', payloadEncoding: 'json' as const }]
         };
       }
       return c;

@@ -219,7 +219,7 @@ export default function SubscriberPanel({
             <div className="space-y-1 pb-4">
               {messages.map((msg, i) => {
                 const isExpanded = expandedMsg === msg.id;
-                const time = new Date(msg.timestamp).toLocaleTimeString(undefined, { hour12: false, fractionalSecondDigits: 3 });
+                const time = new Date(msg.timestamp).toLocaleTimeString(undefined, { hour12: false, fractionalSecondDigits: 3 } as Intl.DateTimeFormatOptions);
                 
                 return (
                   <div key={msg.id || i} className="group">

@@ -251,7 +251,7 @@ export const ServerMonitorDashboard: React.FC = () => {
                  </div>
                  <div className="bg-slate-900 p-4 rounded">
                    <div className="text-sm text-slate-400">Avg Fanout</div>
-                   <div className="text-2xl font-bold">{s.num_subscriptions ? (s.insertions / s.num_subscriptions).toFixed(2) : 0}</div>
+                   <div className="text-2xl font-bold">{(s.avg_fanout ?? 0).toFixed(2)}</div>
                  </div>
               </div>
             )}
@@ -281,7 +281,7 @@ export const ServerMonitorDashboard: React.FC = () => {
                    </div>
                    <div className="flex justify-between py-1">
                      <span className="text-slate-400">File</span>
-                     <span className="font-bold">{(j.store / 1024 / 1024).toFixed(2)} MB</span>
+                     <span className="font-bold">{(j.storage / 1024 / 1024).toFixed(2)} MB</span>
                    </div>
                  </div>
               </div>

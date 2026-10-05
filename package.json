@@ -2,6 +2,7 @@
   "name": "natsbox",
   "version": "1.0.0",
   "description": "NATSBox - Developer helper to create, test, debug and monitor NATS connectivity. Like MQTTBox but for NATS.",
+  "author": "Akash Kharat",
   "main": "dist/main/main/main.js",
   "scripts": {
     "start": "electron .",

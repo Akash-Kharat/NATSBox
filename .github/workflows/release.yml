@@ -83,17 +83,33 @@ jobs:
 
       - run: npm ci --no-audit --no-fund
 
-      - name: Build and package
-        # --publish never: publishing is done once, in the release job below.
-        run: npm run package -- --publish never
+      - name: Build and package (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          if [ -n "${{ secrets.WIN_CSC_LINK }}" ]; then
+            export WIN_CSC_LINK="${{ secrets.WIN_CSC_LINK }}"
+            export WIN_CSC_KEY_PASSWORD="${{ secrets.WIN_CSC_KEY_PASSWORD }}"
+          fi
+          npm run package -- --publish never
+        shell: bash
         env:
-          # Code signing is optional. Set these repository secrets to enable it;
-          # unsigned builds are produced when they are absent.
-          CSC_LINK: ${{ secrets.CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
-          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
-          CSC_IDENTITY_AUTO_DISCOVERY: ${{ secrets.CSC_LINK != '' && 'true' || 'false' }}
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Build and package (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          if [ -n "${{ secrets.CSC_LINK }}" ]; then
+            export CSC_LINK="${{ secrets.CSC_LINK }}"
+            export CSC_KEY_PASSWORD="${{ secrets.CSC_KEY_PASSWORD }}"
+          fi
+          npm run package -- --publish never
+        shell: bash
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Build and package (Linux)
+        if: runner.os == 'Linux'
+        run: npm run package -- --publish never
 
       - uses: actions/upload-artifact@v4
         with:

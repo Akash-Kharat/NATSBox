@@ -70,6 +70,11 @@ export const IPC_CHANNELS = {
   EXPORT_CONFIG: 'persist:export',
   IMPORT_CONFIG: 'persist:import',
 
+  // System & Security Tools
+  OPEN_FILE_DIALOG: 'system:open-file-dialog',
+  SAVE_FILE_DIALOG: 'system:save-file-dialog',
+  GENERATE_NKEY: 'nats:generate-nkey',
+
   // Namespaced nested mappings for backwards compatibility
   CONNECTION: {
     CONNECT: 'nats:connect',

@@ -2,6 +2,7 @@ import { connect, NatsConnection, ConnectionOptions, StringCodec, headers as nat
 import { EventEmitter } from 'events';
 import { ConnectionConfig, ConnectionInfo } from '../../shared/types';
 import fs from 'fs';
+import path from 'path';
 
 const sc = StringCodec();
 
@@ -50,32 +51,58 @@ export class NatsConnectionManager extends EventEmitter {
     } else if (authType === 'userpass' && (config.username || auth.username)) {
       options.user = config.username || auth.username;
       options.pass = config.password || auth.password;
-    } else if (authType === 'nkey' && (config.nkeySeed || auth.nkeySeed)) {
-      const seed = (config.nkeySeed || auth.nkeySeed).trim();
+    } else if (authType === 'nkey' && (config.nkeySeed || auth.nkeySeed || config.nkeyFile || auth.nkeyFile)) {
+      let seed = (config.nkeySeed || auth.nkeySeed || config.nkeyFile || auth.nkeyFile || '').trim();
+      const seedPath = path.isAbsolute(seed) ? seed : path.resolve(process.cwd(), seed);
+      if (fs.existsSync(seedPath)) {
+        seed = fs.readFileSync(seedPath, 'utf-8').trim();
+      } else if (fs.existsSync(seed)) {
+        seed = fs.readFileSync(seed, 'utf-8').trim();
+      }
       options.authenticator = nkeyAuthenticator(new TextEncoder().encode(seed));
     } else if (authType === 'creds' && (config.credsFile || auth.credsFile)) {
-      const credsPath = config.credsFile || auth.credsFile;
-      if (fs.existsSync(credsPath)) {
+      const credsPath = (config.credsFile || auth.credsFile || '').trim();
+      const resolvedCredsPath = path.isAbsolute(credsPath) ? credsPath : path.resolve(process.cwd(), credsPath);
+      if (fs.existsSync(resolvedCredsPath)) {
+        const credsData = fs.readFileSync(resolvedCredsPath);
+        options.authenticator = credsAuthenticator(credsData);
+      } else if (fs.existsSync(credsPath)) {
         const credsData = fs.readFileSync(credsPath);
         options.authenticator = credsAuthenticator(credsData);
       }
     }
 
     // TLS Handling
-    if (config.protocol === 'tls' || config.protocol === 'wss' || config.tlsConfig) {
+    const isTls = config.protocol === 'tls' || config.protocol === 'wss' || config.enableTls || !!config.tlsConfig;
+    if (isTls) {
       const tls: any = {};
       const tlsCfg = config.tlsConfig || {};
       if (tlsCfg.rejectUnauthorized !== undefined) {
         tls.rejectUnauthorized = tlsCfg.rejectUnauthorized;
       }
-      if (tlsCfg.caFile && fs.existsSync(tlsCfg.caFile)) {
-        tls.ca = fs.readFileSync(tlsCfg.caFile);
+      if (tlsCfg.caFile) {
+        const caPath = path.isAbsolute(tlsCfg.caFile) ? tlsCfg.caFile : path.resolve(process.cwd(), tlsCfg.caFile);
+        if (fs.existsSync(caPath)) {
+          tls.ca = fs.readFileSync(caPath);
+        } else if (fs.existsSync(tlsCfg.caFile)) {
+          tls.ca = fs.readFileSync(tlsCfg.caFile);
+        }
       }
-      if (tlsCfg.certFile && fs.existsSync(tlsCfg.certFile)) {
-        tls.cert = fs.readFileSync(tlsCfg.certFile);
+      if (tlsCfg.certFile) {
+        const certPath = path.isAbsolute(tlsCfg.certFile) ? tlsCfg.certFile : path.resolve(process.cwd(), tlsCfg.certFile);
+        if (fs.existsSync(certPath)) {
+          tls.cert = fs.readFileSync(certPath);
+        } else if (fs.existsSync(tlsCfg.certFile)) {
+          tls.cert = fs.readFileSync(tlsCfg.certFile);
+        }
       }
-      if (tlsCfg.keyFile && fs.existsSync(tlsCfg.keyFile)) {
-        tls.key = fs.readFileSync(tlsCfg.keyFile);
+      if (tlsCfg.keyFile) {
+        const keyPath = path.isAbsolute(tlsCfg.keyFile) ? tlsCfg.keyFile : path.resolve(process.cwd(), tlsCfg.keyFile);
+        if (fs.existsSync(keyPath)) {
+          tls.key = fs.readFileSync(keyPath);
+        } else if (fs.existsSync(tlsCfg.keyFile)) {
+          tls.key = fs.readFileSync(tlsCfg.keyFile);
+        }
       }
       options.tls = tls;
     }

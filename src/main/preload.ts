@@ -54,6 +54,9 @@ const CHANNELS = {
   DELETE_LOAD_TEST_CONFIG: 'persist:delete-loadtest',
   EXPORT_CONFIG: 'persist:export',
   IMPORT_CONFIG: 'persist:import',
+  OPEN_FILE_DIALOG: 'system:open-file-dialog',
+  SAVE_FILE_DIALOG: 'system:save-file-dialog',
+  GENERATE_NKEY: 'nats:generate-nkey',
 };
 
 const natsAPI = {
@@ -199,6 +202,13 @@ const natsAPI = {
   deleteLoadTestConfig: (id: string) => ipcRenderer.invoke(CHANNELS.DELETE_LOAD_TEST_CONFIG, id),
   exportConfig: (path: string) => ipcRenderer.invoke(CHANNELS.EXPORT_CONFIG, path),
   importConfig: (path: string) => ipcRenderer.invoke(CHANNELS.IMPORT_CONFIG, path),
+
+  // System & Security tools
+  openFileDialog: (options?: { title?: string; filters?: Array<{ name: string; extensions: string[] }> }) =>
+    ipcRenderer.invoke(CHANNELS.OPEN_FILE_DIALOG, options),
+  saveFileDialog: (options: { title?: string; defaultPath?: string; filters?: Array<{ name: string; extensions: string[] }>; content?: string }) =>
+    ipcRenderer.invoke(CHANNELS.SAVE_FILE_DIALOG, options),
+  generateNKey: () => ipcRenderer.invoke(CHANNELS.GENERATE_NKEY),
 };
 
 try {

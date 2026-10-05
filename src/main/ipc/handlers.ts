@@ -1,4 +1,7 @@
-import { ipcMain, BrowserWindow } from 'electron';
+import { ipcMain, BrowserWindow, dialog } from 'electron';
+import * as fs from 'fs';
+import * as path from 'path';
+import { nkeys } from 'nats';
 import { IPC_CHANNELS } from '../../shared/constants';
 import { natsManager } from '../services/NatsConnectionManager';
 import { jetStreamService } from '../services/JetStreamService';
@@ -272,5 +275,52 @@ export function registerIpcHandlers(mainWindow: BrowserWindow) {
   ipcMain.handle(IPC_CHANNELS.PERSISTENCE.IMPORT_CONFIG, async (_, data: string) => {
     persistenceService.importAll(data);
     return true;
+  });
+
+  // 10. System Dialog & Security Handlers
+  ipcMain.handle(IPC_CHANNELS.OPEN_FILE_DIALOG, async (_, options?: { title?: string; filters?: Array<{ name: string; extensions: string[] }> }) => {
+    const result = await dialog.showOpenDialog(mainWindow, {
+      properties: ['openFile'],
+      title: options?.title || 'Select Certificate or Key File',
+      filters: options?.filters || [
+        { name: 'Certificates & Keys', extensions: ['crt', 'pem', 'key', 'nk', 'creds'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]
+    });
+    if (result.canceled || !result.filePaths || result.filePaths.length === 0) {
+      return null;
+    }
+    return result.filePaths[0];
+  });
+
+  ipcMain.handle(IPC_CHANNELS.SAVE_FILE_DIALOG, async (_, options: { title?: string; defaultPath?: string; filters?: Array<{ name: string; extensions: string[] }>; content?: string }) => {
+    let targetPath = options?.defaultPath;
+    if (!targetPath || !path.isAbsolute(targetPath)) {
+      const result = await dialog.showSaveDialog(mainWindow, {
+        title: options?.title || 'Save File',
+        defaultPath: options?.defaultPath || 'natsuser.nk',
+        filters: options?.filters || [
+          { name: 'NKey Files (*.nk)', extensions: ['nk'] },
+          { name: 'All Files', extensions: ['*'] }
+        ]
+      });
+      if (result.canceled || !result.filePath) return null;
+      targetPath = result.filePath;
+    }
+    if (options?.content !== undefined) {
+      const dir = path.dirname(targetPath);
+      if (dir && !fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(targetPath, options.content, 'utf-8');
+    }
+    return targetPath;
+  });
+
+  ipcMain.handle(IPC_CHANNELS.GENERATE_NKEY, async () => {
+    const user = nkeys.createUser();
+    const publicKey = user.getPublicKey();
+    const seed = new TextDecoder().decode(user.getSeed());
+    return { publicKey, seed };
   });
 }

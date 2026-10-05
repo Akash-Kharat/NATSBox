@@ -10,6 +10,7 @@ export interface AuthConfig {
   username?: string;
   password?: string;
   nkeySeed?: string;
+  nkeyFile?: string;
   credsFile?: string;
   jwt?: string;
 }
@@ -28,6 +29,7 @@ export interface ConnectionConfig {
   servers: string[];  // e.g., ["localhost:4222"]
   auth: AuthConfig;
   tlsConfig?: TLSConfig;
+  enableTls?: boolean;
   maxReconnectAttempts: number;
   reconnectTimeWait: number;  // ms
   pingInterval: number;  // seconds

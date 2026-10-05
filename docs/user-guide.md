@@ -21,16 +21,20 @@ Create one with **New Connection**; edit or delete one from its settings (gear i
 | Field | Notes |
 | --- | --- |
 | Connection Name | Free text, e.g. `Production Cluster` |
-| Protocol | `nats://`, `tls://`, `ws://`, `wss://` |
-| Servers | Comma-separated list, e.g. `n1:4222, n2:4222` |
-| Authentication | None, Token, Username & Password, NKey (seed), Credentials File (path to a `.creds` file) |
-| TLS (for `tls`/`wss`) | Verify server certificate, CA certificate path, client certificate and key paths |
-| Max Reconnects | `-1` = retry forever |
-| Reconnect Wait (ms) | Delay between reconnect attempts (default 2000) |
+| Server URL | e.g. `nats://127.0.0.1:4222` or comma-separated addresses (`tls://`, `ws://`, `wss://`) |
+| Authentication | None, Token, Username & Password, NKey Seed File (`.nk`), Credentials File (`.creds`) |
+| NKey Generator | Click **Generate Key** to create an Ed25519 NKey pair, copy the public key, and click **Save & Use** |
+| Enable TLS / SSL | Checkbox to enforce TLS encryption across any protocol with custom certificates |
+| Root CA Certificate | Path to custom `.crt` or `.pem` CA file with native file **Browse** button |
+| Skip Server Certificate Validation | Allows self-signed certificates or test setups (`rejectUnauthorized: false`) |
+| Mutual TLS (mTLS) | Client Certificate (`.crt`) and Private Key (`.key`) with native file **Browse** buttons |
+| Connection Tolerances | Max Reconnects (`-1` = retry forever), Reconnect Wait (ms) |
 
-**Test Connection** connects and immediately disconnects without saving anything.
+- **Test Connect**: verifies connectivity and immediately disconnects without modifying store state.
+- **Test Publish**: publishes a test ping message (`_natsbox.ping`) to verify broker write access.
+- **Heartbeat**: measures live broker roundtrip ping latency.
 
-> Credentials, tokens and key paths are stored locally on your machine. Do not share exported configuration files without reviewing them. See [SECURITY.md](../SECURITY.md).
+> Credentials, tokens, private keys and certificates are stored locally on your machine. Do not share exported configuration files without reviewing them. See [SECURITY.md](../SECURITY.md).
 
 ## Pub / Sub
 

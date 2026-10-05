@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "dockerode": "^4.0.0",
-    "electron-store": "^8.2.0",
+    "electron-store": "^11.0.2",
     "nats": "^2.28.0",
     "uuid": "^9.0.0"
   },

@@ -1,0 +1,16 @@
+appId: com.natsbox.app
+productName: NATSBox
+files:
+  - dist/**/*
+  - package.json
+directories:
+  output: release
+artifactName: ${productName}-${version}-${os}-${arch}.${ext}
+win:
+  target: nsis
+mac:
+  target: dmg
+linux:
+  target: AppImage
+  category: Development
+# To add custom icons: create assets/icon.ico|icns|png and add `icon:` keys per platform.

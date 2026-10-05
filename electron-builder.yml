@@ -8,9 +8,11 @@ directories:
 artifactName: ${productName}-${version}-${os}-${arch}.${ext}
 win:
   target: nsis
+  icon: assets/icon.ico
 mac:
   target: dmg
+  icon: assets/icon.png
 linux:
   target: AppImage
   category: Development
-# To add custom icons: create assets/icon.ico|icns|png and add `icon:` keys per platform.
+  icon: assets/icon.png

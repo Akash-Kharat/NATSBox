@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Server, Activity, Container, Settings, Info, Plus, Zap } from 'lucide-react';
 import { useUIStore } from '../../stores/uiStore';
+import logo from '../../assets/logo.png';
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -24,14 +25,8 @@ export default function Sidebar() {
     <div className="flex flex-col w-64 bg-slate-950 text-slate-300 h-screen flex-shrink-0 border-r border-slate-900 shadow-xl relative z-20">
       
       {/* Brand Header */}
-      <div className="flex items-center gap-3 px-6 py-6 border-b border-slate-800/50">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-600 text-white shrink-0 shadow-sm">
-          <Zap size={18} fill="currentColor" />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-lg font-bold text-white tracking-tight leading-none">NATSBox</span>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">NATS Toolkit</span>
-        </div>
+      <div className="flex items-center justify-center px-4 py-6 border-b border-slate-800/50">
+        <img src={logo} alt="NATSBox" className="h-10 w-auto object-contain" />
       </div>
 
       {/* Navigation */}

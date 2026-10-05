@@ -1,18 +1,17 @@
 import React from 'react';
 import { Github, ExternalLink, Info } from 'lucide-react';
 
+import logo from '../../assets/logo.png';
+
 export const About: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center h-full bg-gray-50 text-gray-800 p-8">
       <div className="bg-white p-10 rounded-xl shadow-md max-w-2xl w-full text-center border border-gray-100">
         
         <div className="flex justify-center mb-6">
-          <div className="w-24 h-24 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg transform rotate-3">
-            <span className="text-white font-bold text-4xl">N</span>
-          </div>
+          <img src={logo} alt="NATSBox" className="h-24 w-auto object-contain" />
         </div>
         
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-2">NATSBox</h1>
         <div className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold mb-6">
           Version 1.0.0
         </div>
